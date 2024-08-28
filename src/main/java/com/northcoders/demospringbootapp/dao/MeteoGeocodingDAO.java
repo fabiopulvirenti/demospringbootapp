@@ -1,9 +1,9 @@
 package com.northcoders.demospringbootapp.dao;
 
+import com.northcoders.demospringbootapp.exception.ApiConnectionException;
 import com.northcoders.demospringbootapp.model.Location;
-import com.northcoders.demospringbootapp.model.MeteoGeoResult;
+import com.northcoders.demospringbootapp.model.MeteoGeoResponseBody;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.reactive.function.client.WebClient;
 
 public class MeteoGeocodingDAO extends DAO {
 
@@ -14,7 +14,7 @@ public class MeteoGeocodingDAO extends DAO {
 
 
     public Location getCoordinates(String city) {
-        ResponseEntity<MeteoGeoResult> response = this.getWebClient().get()
+        ResponseEntity<MeteoGeoResponseBody> response = this.getWebClient().get()
                 .uri((uriBuilder) -> uriBuilder
                         .path("/v1/search")
                         .queryParam("name", city)
@@ -22,14 +22,14 @@ public class MeteoGeocodingDAO extends DAO {
                         .build()
                 )
                 .retrieve()
-                .toEntity(MeteoGeoResult.class)
+                .toEntity(MeteoGeoResponseBody.class)
                 .block();
 
         if (response == null || !response.hasBody()) {
-            throw new RuntimeException("Something went wrong while reaching out to Meteo Geocoding API!");
+            throw new ApiConnectionException("Meteo Geocoding");
         }
 
-        MeteoGeoResult meteoGeoResult = response.getBody();
+        MeteoGeoResponseBody meteoGeoResult = response.getBody();
 
         if (response.getBody().results() == null) {
             throw new IllegalArgumentException("City not found!");
