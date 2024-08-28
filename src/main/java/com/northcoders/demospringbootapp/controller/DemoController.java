@@ -2,6 +2,7 @@ package com.northcoders.demospringbootapp.controller;
 
 import com.northcoders.demospringbootapp.dao.MeteoGeocodingDAO;
 import com.northcoders.demospringbootapp.model.Location;
+import com.northcoders.demospringbootapp.model.LocationCoordinate;
 import com.northcoders.demospringbootapp.model.Person;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -43,12 +44,15 @@ public class DemoController {
     }
 
     @GetMapping("/location")
-    public Location getLocationofCities(){
+    public LocationCoordinate getLocationofCities(){
 
         MeteoGeocodingDAO meteo = new MeteoGeocodingDAO();
-        System.out.println(meteo.getLocation("London"));
-        return meteo.getLocation("London");
+        Location location = meteo.getLocation("London");
+        System.out.println(location);
 
+        LocationCoordinate locationCoordinate = new LocationCoordinate(location.latitude(), location.longitude());
+
+        return locationCoordinate;
     }
 
 

@@ -1,6 +1,7 @@
 package com.northcoders.demospringbootapp.dao;
 
 import com.northcoders.demospringbootapp.model.Location;
+import com.northcoders.demospringbootapp.model.MeteoGeoResult;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -15,21 +16,24 @@ public MeteoGeocodingDAO() {
 
 
 public Location getLocation(String city){
-    ResponseEntity<Location> response = webClient.get()
+    ResponseEntity<MeteoGeoResult> response = webClient.get()
             .uri((uriBuilder) -> uriBuilder
-                    .path("/api/v1/search")
+                    .path("/v1/search")
                     .queryParam("name", city)
+                    .queryParam("count", 1)
                     .build()
             )
             .retrieve()
-            .toEntity(Location.class)
+            .toEntity(MeteoGeoResult.class)
             .block();
 
     if (response == null || !response.hasBody()) {
         throw new RuntimeException("Something went wrong while reaching out to MeteoGeocoding API!");
     }
 
-    return response.getBody();
+    MeteoGeoResult meteoGeoResult = response.getBody();
+
+    return meteoGeoResult.results().getFirst();
 
 }
 
