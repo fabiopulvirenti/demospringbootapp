@@ -5,18 +5,16 @@ import com.northcoders.demospringbootapp.model.MeteoGeoResult;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.reactive.function.client.WebClient;
 
-public class MeteoGeocodingDAO {
+public class MeteoGeocodingDAO extends DAO {
 
-
-    private WebClient webClient;
 
     public MeteoGeocodingDAO() {
-        this.webClient = WebClient.builder().baseUrl("https://geocoding-api.open-meteo.com").build();
+        super("https://geocoding-api.open-meteo.com");
     }
 
 
     public Location getCoordinates(String city) {
-        ResponseEntity<MeteoGeoResult> response = webClient.get()
+        ResponseEntity<MeteoGeoResult> response = this.getWebClient().get()
                 .uri((uriBuilder) -> uriBuilder
                         .path("/v1/search")
                         .queryParam("name", city)
