@@ -57,6 +57,16 @@ public class DemoController {
 
     @GetMapping("/sunrise-sunset")
     public SunriseSunsetInfo getSunriseSunsetInfoOfTheLocation(@RequestParam(name = "lat") double latitude, @RequestParam(name = "long") double longitude) {
+        if (latitude < 0 || latitude > 180
+                || longitude < 0 || longitude > 360
+        ) {
+            throw new IllegalArgumentException("""
+                    Coordinate values must be valid!
+                    - latitude: between 0 and 180 
+                    - longitude: between 0 and 360 
+                    """);
+        }
+
         SunriseSunsetDAO sunriseSunsetDAO = new SunriseSunsetDAO();
 
         SunriseSunsetInfo sunriseSunsetInfo = sunriseSunsetDAO.getSunriseSunsetInfo(new Coordinate(latitude, longitude));

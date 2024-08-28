@@ -14,6 +14,8 @@ public class MeteoGeocodingDAO extends DAO {
 
 
     public Location getCoordinates(String city) {
+        if (city.isBlank()) throw new IllegalArgumentException("City name cannot be blank!");
+
         ResponseEntity<MeteoGeoResponseBody> response = this.getWebClient().get()
                 .uri((uriBuilder) -> uriBuilder
                         .path("/v1/search")
