@@ -8,37 +8,38 @@ import org.springframework.web.reactive.function.client.WebClient;
 public class MeteoGeocodingDAO {
 
 
-private WebClient webClient;
+    private WebClient webClient;
 
-public MeteoGeocodingDAO() {
-    this.webClient = WebClient.builder().baseUrl("https://geocoding-api.open-meteo.com").build();
-}
-
-
-public Location getLocation(String city){
-    ResponseEntity<MeteoGeoResult> response = webClient.get()
-            .uri((uriBuilder) -> uriBuilder
-                    .path("/v1/search")
-                    .queryParam("name", city)
-                    .queryParam("count", 1)
-                    .build()
-            )
-            .retrieve()
-            .toEntity(MeteoGeoResult.class)
-            .block();
-
-    if (response == null || !response.hasBody()) {
-        throw new RuntimeException("Something went wrong while reaching out to MeteoGeocoding API!");
+    public MeteoGeocodingDAO() {
+        this.webClient = WebClient.builder().baseUrl("https://geocoding-api.open-meteo.com").build();
     }
 
-    MeteoGeoResult meteoGeoResult = response.getBody();
 
-    return meteoGeoResult.results().getFirst();
+    public Location getCoordinates(String city) {
+        ResponseEntity<MeteoGeoResult> response = webClient.get()
+                .uri((uriBuilder) -> uriBuilder
+                        .path("/v1/search")
+                        .queryParam("name", city)
+                        .queryParam("count", 1)
+                        .build()
+                )
+                .retrieve()
+                .toEntity(MeteoGeoResult.class)
+                .block();
 
-}
+        if (response == null || !response.hasBody()) {
+            throw new RuntimeException("Something went wrong while reaching out to Meteo Geocoding API!");
+        }
 
+        MeteoGeoResult meteoGeoResult = response.getBody();
 
+        if (response.getBody().results() == null) {
+            throw new IllegalArgumentException("City not found!");
+        }
 
+        return meteoGeoResult.results().getFirst();
+
+    }
 
 
 }
